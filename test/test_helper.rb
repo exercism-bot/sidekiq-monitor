@@ -1,4 +1,10 @@
-$LOAD_PATH.unshift File.expand_path("../lib", __dir__)
-require "sidekiq_monitor"
+gem 'minitest'
+require 'minitest/autorun'
+require 'minitest/pride'
+require 'minitest/mock'
+require 'mocha/minitest'
 
-require "minitest/autorun"
+$LOAD_PATH.unshift File.expand_path('../lib', __dir__)
+require 'sidekiq_monitor'
+
+require 'minitest/autorun'

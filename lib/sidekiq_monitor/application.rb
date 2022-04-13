@@ -7,7 +7,7 @@ require 'sinatra/json'
 module SidekiqMonitor
   class Application < Sinatra::Base
     get '/sanity' do
-      json(ruok: :yes)
+      json(ruok: true)
     end
   end
 end
