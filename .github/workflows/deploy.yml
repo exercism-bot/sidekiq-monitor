@@ -63,9 +63,6 @@ jobs:
           # Retag this as the latest
           docker tag $IMAGE_NAME $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-
-          # Retag it as website below because the : hurts us otherwise
-          docker tag $IMAGE_NAME website
           echo "::set-output name=image::$IMAGE_NAME"
 
       ##############################
