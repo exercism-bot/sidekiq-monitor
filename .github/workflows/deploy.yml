@@ -80,7 +80,7 @@ jobs:
 
       # Set application image
       - name: Update the definition for application
-        id: update_definition_for
+        id: update_definition
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
@@ -98,7 +98,7 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           # Ensure this is the final step in the daisy-chain above
-          task-definition: ${{ steps.update_definition_for_nginx.outputs.task-definition }}
+          task-definition: ${{ steps.update_definition.outputs.task-definition }}
           service: ${{ env.service_name }}
           cluster: ${{ env.cluster_name }}
           wait-for-service-stability: true
