@@ -1,3 +1,4 @@
+require 'socket'
 require 'sidekiq/api'
 require 'exercism-config'
 
@@ -14,7 +15,16 @@ module SidekiqMonitor
     include Mandate
 
     def call()
-      Sidekiq::ProcessSet.new.any?
+      puts "=============================="
+      Sidekiq::ProcessSet.new.each {|process| puts process.inspect }
+      puts "------------------------------"
+      puts "hostname: #{hostname}"
+      puts "++++++++++++++++++++++++++++++"
+      Sidekiq::ProcessSet.new.any? {|process| process["hostname"] == hostname}
     end
+
+    private
+    memoize
+    def hostname = Socket.gethostname
   end
 end

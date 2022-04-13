@@ -9,10 +9,10 @@ module SidekiqMonitor
     get '/' do
       if AmIAlive.()
         status(200)
-        json('good')
+        json({alive: true})
       else
         status(500)
-        json('bad')
+        json({alive: false})
       end
     end
 
