@@ -58,7 +58,7 @@ jobs:
         run: |
           # Build a docker container and push it to ECR
           docker build -t $IMAGE_NAME .
-          docker push $IMAGE_NAME
+          # docker push $IMAGE_NAME
 
           # Retag this as the latest
           docker tag $IMAGE_NAME $ECR_REGISTRY/$ECR_REPOSITORY:latest
