@@ -1,6 +1,7 @@
-require_relative "sidekiq_monitor/version"
+require "zeitwerk"
+loader = Zeitwerk::Loader.for_gem
+loader.setup
 
 module SidekiqMonitor
   class Error < StandardError; end
-  # Your code goes here...
 end

@@ -5,11 +5,15 @@ GEM
     connection_pool (2.2.5)
     mandate (1.0.0)
     minitest (5.15.0)
+    multi_json (1.15.0)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
+    nio4r (2.5.8)
     parallel (1.22.1)
     parser (3.1.2.0)
       ast (~> 2.4.1)
+    puma (5.6.4)
+      nio4r (~> 2.0)
     rack (2.2.3)
     rack-protection (2.2.0)
       rack
@@ -40,8 +44,15 @@ GEM
       rack (~> 2.2)
       rack-protection (= 2.2.0)
       tilt (~> 2.0)
+    sinatra-contrib (2.2.0)
+      multi_json
+      mustermann (~> 1.0)
+      rack-protection (= 2.2.0)
+      sinatra (= 2.2.0)
+      tilt (~> 2.0)
     tilt (2.0.10)
     unicode-display_width (2.1.0)
+    zeitwerk (2.5.4)
 
 PLATFORMS
   x86_64-linux
@@ -49,10 +60,13 @@ PLATFORMS
 DEPENDENCIES
   mandate (~> 1.0)
   minitest (~> 5.0)
+  puma (~> 5.6)
   rake (~> 13.0)
   rubocop (~> 1.21)
   sidekiq (~> 6.4)
   sinatra (~> 2.2)
+  sinatra-contrib (~> 2.2)
+  zeitwerk (~> 2.5)
 
 BUNDLED WITH
    2.3.4
