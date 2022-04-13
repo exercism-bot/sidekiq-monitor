@@ -1,0 +1,107 @@
+name: Deploy to Amazon ECS
+
+env:
+  aws_region: eu-west-2
+  task_definition_name: sidekiq
+  service_name: sidekiq
+  cluster_name: sidekiq
+  ecr_repository: "sidekiq-monitor"
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Upload images to ECR, and defintion to ECS
+    runs-on: ubuntu-latest
+    steps:
+      ###############
+      ###############
+      # Setup Steps #
+      ###############
+      ###############
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: satackey/action-docker-layer-caching@v0.0.5
+        continue-on-error: true
+        with:
+          # Change these to rest teh cache
+          key: docker-layer-caching-deploy-{hash}
+          restore-keys: docker-layer-caching-deploy-
+          concurrency: 30
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_DEPLOY_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_DEPLOY_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.aws_region }}
+
+      - name: Login to Amazon ECR
+        id: login_to_ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      ###############################
+      ###############################
+      # Build the Application image #
+      ###############################
+      ###############################
+      - name: Build and Push Application Docker
+        id: build
+        env:
+          ECR_REGISTRY: ${{ steps.login_to_ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ env.ecr_repository }}
+          IMAGE_NAME: "${{ steps.login_to_ecr.outputs.registry}}/${{ env.ecr_repository }}:${{ github.sha }}"
+        run: |
+          # Build a docker container and push it to ECR
+          docker build -t $IMAGE_NAME .
+          docker push $IMAGE_NAME
+
+          # Retag this as the latest
+          docker tag $IMAGE_NAME $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+          # Retag it as website below because the : hurts us otherwise
+          docker tag $IMAGE_NAME website
+          echo "::set-output name=image::$IMAGE_NAME"
+
+      ##############################
+      ##############################
+      # Update the task definition #
+      ##############################
+      ##############################
+
+      # We get the existing task definition to update
+      # Note that this is passed into the first update action
+      # but then chained from action to action for the others.
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition --task-definition ${{ env.task_definition_name }} --query taskDefinition > task-definition.json
+
+      # Set application image
+      - name: Update the definition for application
+        id: update_definition_for
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: application
+          image: ${{ steps.build.outputs.image }}
+
+      ##############################
+      ##############################
+      # Deploy the task definition #
+      ##############################
+      ##############################
+
+      # Push the new defintion up to ECS and deploy a new sevice from it.
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          # Ensure this is the final step in the daisy-chain above
+          task-definition: ${{ steps.update_definition_for_nginx.outputs.task-definition }}
+          service: ${{ env.service_name }}
+          cluster: ${{ env.cluster_name }}
+          wait-for-service-stability: true
