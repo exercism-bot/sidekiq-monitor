@@ -19,7 +19,6 @@ module SidekiqMonitor
       Sidekiq::ProcessSet.new.each { |process| puts process.inspect }
       puts '------------------------------'
       puts "hostname: #{hostname}"
-      puts '++++++++++++++++++++++++++++++'
       Sidekiq::ProcessSet.new.any? { |process| process['hostname'] == hostname }
     end
 
