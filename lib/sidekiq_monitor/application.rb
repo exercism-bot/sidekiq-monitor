@@ -1,0 +1,3 @@
+module SidekiqMonitor
+  
+end
