@@ -7,12 +7,12 @@ require 'sinatra/json'
 module SidekiqMonitor
   class Application < Sinatra::Base
     get '/' do
-      if AmIAlive.()
+      if AmIAlive.call
         status(200)
-        json({alive: true})
+        json({ alive: true })
       else
         status(500)
-        json({alive: false})
+        json({ alive: false })
       end
     end
 

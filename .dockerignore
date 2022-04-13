@@ -1,0 +1,7 @@
+.github/
+.git/
+bin/
+test/
+.gitignore
+.rubocop.yml
+README.md
