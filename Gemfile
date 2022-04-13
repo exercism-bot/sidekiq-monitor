@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'aws-sdk-s3', '~> 1.113'
+gem 'nokogiri', '~> 1.13'
 gem 'exercism-config', '~> 0.83.0'
 gem 'mandate', '~> 1.0'
 gem 'puma', '~> 5.6'
