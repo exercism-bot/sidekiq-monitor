@@ -10,3 +10,6 @@ gem 'sidekiq', '~> 6.4'
 gem 'sinatra', '~> 2.2'
 gem 'sinatra-contrib', '~> 2.2'
 gem 'zeitwerk', '~> 2.5'
+gem "exercism-config", "~> 0.83.0"
+
+gem "aws-sdk-s3", "~> 1.113"
